@@ -58,6 +58,9 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
 
+    // Activity
+    implementation("androidx.activity:activity-compose:1.8.2")
+
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
