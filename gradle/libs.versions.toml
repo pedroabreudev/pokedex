@@ -13,6 +13,11 @@ coil = "2.5.0"
 mockk = "1.13.9"
 kotlinx-serialization = "1.6.3"
 ksp = "1.9.22-1.0.17"
+core-ktx = "1.10.1"
+junit = "1.1.5"
+espresso-core = "3.5.1"
+appcompat = "1.6.1"
+material = "1.10.0"
 
 [libraries]
 # Compose
@@ -65,6 +70,11 @@ turbine = { group = "app.cash.turbine", name = "turbine", version = "1.1.0" }
 # Gradle plugins (necessário pro build-logic)
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [bundles]
 compose = ["compose-ui", "compose-ui-tooling-preview", "compose-material3", "lifecycle-runtime-compose"]

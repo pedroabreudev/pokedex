@@ -22,3 +22,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "Pokedex"
 include(":app")
+include(":core:core-network")
+include(":core:core-database")
+include(":core:core-common")
+include(":core:core-ui")
+include(":features:feature-pokemon-list")
+include(":features:feature-pokemon-detail")
