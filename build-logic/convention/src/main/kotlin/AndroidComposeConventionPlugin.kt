@@ -1,8 +1,10 @@
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.getByType
 
 class AndroidComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -14,15 +16,13 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
                     kotlinCompilerExtensionVersion = "1.5.8"
                 }
             }
+            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             dependencies {
-                val catalog = extensions
-                    .getByType(org.gradle.api.artifacts.VersionCatalogsExtension::class.java)
-                    .named("libs")
-                add("implementation", platform(catalog.findLibrary("compose.bom").get()))
-                add("implementation", catalog.findLibrary("compose.ui").get())
-                add("implementation", catalog.findLibrary("compose.ui.tooling.preview").get())
-                add("implementation", catalog.findLibrary("compose.material3").get())
-                add("debugImplementation", catalog.findLibrary("compose.ui.tooling").get())
+                add("implementation", platform(libs.findLibrary("compose.bom").get()))
+                add("implementation", libs.findLibrary("compose.ui").get())
+                add("implementation", libs.findLibrary("compose.ui.tooling.preview").get())
+                add("implementation", libs.findLibrary("compose.material3").get())
+                add("debugImplementation", libs.findLibrary("compose.ui.tooling").get())
             }
         }
     }
