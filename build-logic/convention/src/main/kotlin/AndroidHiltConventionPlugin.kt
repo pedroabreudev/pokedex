@@ -10,9 +10,15 @@ class AndroidHiltConventionPlugin : Plugin<Project> {
                 apply("com.google.devtools.ksp")
             }
             dependencies {
-                add("implementation", libs.findLibrary("hilt.android").get())
-                add("ksp", libs.findLibrary("hilt.compiler").get())
+                add("implementation", catalogLibrary("hilt.android"))
+                add("ksp", catalogLibrary("hilt.compiler"))
             }
         }
     }
+
+    private fun Project.catalogLibrary(alias: String) =
+        extensions.getByType(org.gradle.api.artifacts.VersionCatalogsExtension::class.java)
+            .named("libs")
+            .findLibrary(alias)
+            .get()
 }

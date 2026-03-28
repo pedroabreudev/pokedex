@@ -15,12 +15,14 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
                 }
             }
             dependencies {
-                val bom = libs.findLibrary("compose.bom").get()
-                add("implementation", platform(bom))
-                add("implementation", libs.findLibrary("compose.ui").get())
-                add("implementation", libs.findLibrary("compose.ui.tooling.preview").get())
-                add("implementation", libs.findLibrary("compose.material3").get())
-                add("debugImplementation", libs.findLibrary("compose.ui.tooling").get())
+                val catalog = extensions
+                    .getByType(org.gradle.api.artifacts.VersionCatalogsExtension::class.java)
+                    .named("libs")
+                add("implementation", platform(catalog.findLibrary("compose.bom").get()))
+                add("implementation", catalog.findLibrary("compose.ui").get())
+                add("implementation", catalog.findLibrary("compose.ui.tooling.preview").get())
+                add("implementation", catalog.findLibrary("compose.material3").get())
+                add("debugImplementation", catalog.findLibrary("compose.ui.tooling").get())
             }
         }
     }
