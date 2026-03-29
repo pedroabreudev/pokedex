@@ -2,6 +2,8 @@ package com.pedroabreudev.pokedex.core.network.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.pedroabreudev.pokedex.core.network.api.PokemonApi
+import com.pedroabreudev.pokedex.core.network.repository.PokemonRepository
+import com.pedroabreudev.pokedex.core.network.repository.PokemonRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,7 +51,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun providePokemonApi(retrofit: Retrofit): PokemonApi =
-        retrofit.create(PokemonApi::class.java)
+    fun providePokemonApi(retrofit: Retrofit): PokemonApi = retrofit.create(PokemonApi::class.java)
 
+    @Provides
+    @Singleton
+    fun providePokemonRepository(api: PokemonApi): PokemonRepository = PokemonRepositoryImpl(api)
 }
