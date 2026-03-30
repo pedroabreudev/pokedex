@@ -60,6 +60,9 @@ dependencies {
 
     // Activity
     implementation("androidx.activity:activity-compose:1.8.2")
+    implementation(project(":features:feature-pokemon-list"))
+    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation(libs.navigation.compose)
 
     // Hilt
     implementation(libs.hilt.android)

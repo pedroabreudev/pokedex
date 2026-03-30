@@ -2,9 +2,9 @@ package com.pedroabreudev.pokedex.feature.list.domain
 
 import com.pedroabreudev.pokedex.core.common.Resource
 import com.pedroabreudev.pokedex.core.network.repository.PokemonRepository
+import javax.inject.Inject
 
-class GetPokemonListUseCase(private val repository: PokemonRepository) {
-
+class GetPokemonListUseCase @Inject constructor(private val repository: PokemonRepository) {
     suspend operator fun invoke(
         limit: Int = 20,
         offset: Int = 0
