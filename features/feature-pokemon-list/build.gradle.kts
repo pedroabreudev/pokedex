@@ -12,4 +12,8 @@ dependencies {
     implementation(project(":core:core-common"))
     implementation(project(":core:core-ui"))
     implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.navigation.compose)
 }
