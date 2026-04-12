@@ -2,35 +2,19 @@ package com.pedroabreudev.pokedex.feature.list.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pedroabreudev.pokedex.core.common.Resource
-import com.pedroabreudev.pokedex.feature.list.domain.GetPokemonListUseCase
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.pedroabreudev.pokedex.feature.list.domain.GetPokemonPagingUseCase
+import com.pedroabreudev.pokedex.feature.list.domain.Pokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
-    private val useCase: GetPokemonListUseCase
+    private val getPokemonPagingUseCase: GetPokemonPagingUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<PokemonListState>(PokemonListState.Loading)
-    val uiState: StateFlow<PokemonListState> = _uiState.asStateFlow()
-
-    init {
-        getPokemonList()
-    }
-
-    fun getPokemonList() {
-        viewModelScope.launch {
-            _uiState.value = PokemonListState.Loading
-            when (val result = useCase()) {
-                is Resource.Success -> _uiState.value = PokemonListState.Success(result.data)
-                is Resource.Error -> _uiState.value = PokemonListState.Error(result.exception)
-                is Resource.Loading -> _uiState.value = PokemonListState.Loading
-            }
-        }
-    }
+    val pokemonPagingFlow: Flow<PagingData<Pokemon>> =
+        getPokemonPagingUseCase().cachedIn(viewModelScope)
 }
