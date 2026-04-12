@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
@@ -25,41 +26,62 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import com.pedroabreudev.pokedex.feature.list.domain.Pokemon
 
 @Composable
 fun PokemonListScreen(viewModel: PokemonListViewModel = hiltViewModel()) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lazyPagingItems = viewModel.pokemonPagingFlow.collectAsLazyPagingItems()
 
-    when (val state = uiState) {
-        is PokemonListState.Loading -> LoadingContent()
-        is PokemonListState.Success -> PokemonGrid(pokemons = state.pokemons)
-        is PokemonListState.Error -> ErrorContent(exception = state.exception)
-        is PokemonListState.Empty -> EmptyContent()
+    Box(modifier = Modifier.fillMaxSize()) {
+        when (lazyPagingItems.loadState.refresh) {
+            is LoadState.Loading -> LoadingContent()
+            is LoadState.Error -> {
+                val error = lazyPagingItems.loadState.refresh as LoadState.Error
+                ErrorContent(exception = error.error)
+            }
+
+            else -> PokemonGrid(lazyPagingItems = lazyPagingItems)
+        }
     }
 }
 
 @Composable
-private fun LoadingContent() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-private fun PokemonGrid(pokemons: List<Pokemon>) {
+private fun PokemonGrid(lazyPagingItems: LazyPagingItems<Pokemon>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(pokemons) { pokemon ->
-            PokemonCard(pokemon = pokemon)
+        items(count = lazyPagingItems.itemCount, key = lazyPagingItems.itemKey { it.id }) { index ->
+            lazyPagingItems[index]?.let { pokemon ->
+                PokemonCard(pokemon = pokemon)
+            }
+        }
+
+        when (lazyPagingItems.loadState.append) {
+            is LoadState.Loading -> item(span = { GridItemSpan(2) }) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+
+            is LoadState.Error -> item(span = { GridItemSpan(2) }) {
+                val error = lazyPagingItems.loadState.append as LoadState.Error
+                ErrorContent(exception = error.error)
+            }
+
+            else -> {}
         }
     }
 }
@@ -94,11 +116,15 @@ private fun PokemonCard(pokemon: Pokemon) {
 }
 
 @Composable
+private fun LoadingContent() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
 private fun ErrorContent(exception: Throwable) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "Algo deu errado",
@@ -117,10 +143,7 @@ private fun ErrorContent(exception: Throwable) {
 
 @Composable
 private fun EmptyContent() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(
             text = "Nenhum pokémon encontrado",
             style = MaterialTheme.typography.bodyMedium
